@@ -5,22 +5,48 @@ local Game = {}
 -- background
 local sudokuBoard = love.graphics.newImage("sudokuBoard.png")
 
--- initialize all cells (aka 3 for testing purposes)
-local cells = {}
-local xValues = {157, 209, 261} --temporary thing
-for index,xValue in ipairs(xValues) do -- also temp
-  cells[index] = Cell.new(xValue, 32)
-end
-
 -- const vars
 local BOARDTOP = 25
 local BOARDLEFT = 150
+local CELLTOP = 32
+local CELLLEFT = 157
+
+-- initialize all cells
+local cells = {}
+
+local xValue = CELLLEFT
+local yValue = CELLTOP
+local counter = 1
+local count = 1
+
+--this is gross, i know. i'll fix it when it's not 3:30am
+for y = 1,9 do
+  for x = 1,9 do
+    cells[9*(y-1)+x] = Cell.new(xValue, yValue)
+    xValue = xValue + cells[1].width - 1
+
+    if count % 3 == 0 then
+      xValue = xValue + 7
+      count = 0
+    end
+    count = count + 1
+  end
+
+  yValue = yValue + cells[1].width - 1
+  xValue = CELLLEFT
+
+  if counter % 3 == 0 then
+    yValue = yValue + 7
+    counter = 0
+  end
+  counter = counter + 1
+end
 
 function Game:draw()
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(sudokuBoard, BOARDLEFT, BOARDTOP, 0)
 
-  -- this looks awful, i know. i'd prefer to not have a for loop here
+  local c = 0
   for index,cell in ipairs(cells) do
     if cell:isInBounds(love.mouse.getX(), love.mouse.getY()) then
       love.graphics.setColor(255, 128, 0)
