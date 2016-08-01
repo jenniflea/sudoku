@@ -10,6 +10,7 @@ local BOARDTOP = 25
 local BOARDLEFT = 150
 local CELLTOP = 32
 local CELLLEFT = 157
+local FONT = love.graphics.newFont(45)
 
 -- initialize all cells
 local cells = {}
@@ -42,23 +43,33 @@ for y = 1,9 do
   counter = counter + 1
 end
 
+--temporary. for testing
+cells[5].isStatic = true
+cells[5].value = 5
+
 function Game:draw()
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(sudokuBoard, BOARDLEFT, BOARDTOP, 0)
 
   local c = 0
   for index,cell in ipairs(cells) do
+    if cell.value ~= 0 then
+      if cell.isStatic then
+        love.graphics.setColor(0,0,0)
+      else
+        love.graphics.setColor(0,0,255)
+      end
+
+      love.graphics.setFont(FONT)
+      love.graphics.printf(cell.value, cell.x, cell.y, cell.width, "center")
+    end
+
     if cell:isInBounds(love.mouse.getX(), love.mouse.getY()) then
       love.graphics.setColor(255, 128, 0)
 
-      if love.mouse.isDown(1) then
-        love.graphics.rectangle("fill", cell.x, cell.y,
-                                cell.width, cell.width)
-      else
-        love.graphics.rectangle("line", cell.x, cell.y,
-                                cell.width, cell.width)
+      if not cell.isStatic then
+        cell:drawOptions()
       end
-      break
     end
   end
 end
