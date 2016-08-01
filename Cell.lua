@@ -19,6 +19,7 @@ function Cell:isInBounds(x, y)
 end
 
 function Cell:drawOptions()
+  love.graphics.setColor(255, 128, 0)
   love.graphics.setFont(font)
   love.graphics.rectangle("line", self.x, self.y, self.width, self.width)
 
@@ -26,7 +27,7 @@ function Cell:drawOptions()
   local y = 1 + self.y
   local size = 17
   for n = 1,9 do
-  love.graphics.setColor(255, 128, 0)
+    love.graphics.setColor(255,128,0)
     if love.mouse.isDown(1) then
       if love.mouse.getX() >= x and love.mouse.getX() < x + size and
           love.mouse.getY() >= y and love.mouse.getY() < y + size then

@@ -17,57 +17,64 @@ local cells = {}
 
 local xValue = CELLLEFT
 local yValue = CELLTOP
-local counter = 1
-local count = 1
+local xCount = 1
+local yCount = 1
 
---this is gross, i know. i'll fix it when it's not 3:30am
 for y = 1,9 do
   for x = 1,9 do
     cells[9*(y-1)+x] = Cell.new(xValue, yValue)
     xValue = xValue + cells[1].width - 1
 
-    if count % 3 == 0 then
+    --every 3 cells, add 7 pixels (for borders)
+    if xCount % 3 == 0 then
       xValue = xValue + 7
-      count = 0
+      xCount = 0
     end
-    count = count + 1
+    xCount = xCount + 1
   end
 
   yValue = yValue + cells[1].width - 1
   xValue = CELLLEFT
 
-  if counter % 3 == 0 then
+  --every 3 vertical cells, add 7 pixels (for borders)
+  if yCount % 3 == 0 then
     yValue = yValue + 7
-    counter = 0
+    yCount = 0
   end
-  counter = counter + 1
+  yCount = yCount + 1
 end
-
---temporary. for testing
-cells[5].isStatic = true
-cells[5].value = 5
 
 function Game:draw()
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(sudokuBoard, BOARDLEFT, BOARDTOP, 0)
 
-  local c = 0
+  --for every cell in Sudoku board
   for index,cell in ipairs(cells) do
-    if cell.value ~= 0 then
-      if cell.isStatic then
-        love.graphics.setColor(0,0,0)
-      else
-        love.graphics.setColor(0,0,255)
-      end
+    love.graphics.setFont(FONT)
 
-      love.graphics.setFont(FONT)
+    --if cell contains a pre-defined value, print value
+    if cell.isStatic then
+      love.graphics.setColor(0,0,0)
       love.graphics.printf(cell.value, cell.x, cell.y, cell.width, "center")
-    end
+    else
+      
+        --if mouse is not hovering over cell
+      if not cell:isInBounds(love.mouse.getX(), love.mouse.getY()) then
 
-    if cell:isInBounds(love.mouse.getX(), love.mouse.getY()) then
-      love.graphics.setColor(255, 128, 0)
+        --if cell contains a number, print value
+        if cell.value ~= 0 then
+          love.graphics.setColor(0,51,255)
+          love.graphics.printf(cell.value, cell.x, cell.y,
+                                cell.width, "center")
+        end
+      else
 
-      if not cell.isStatic then
+        --if cell contains a number
+        if cell.value ~= 0 then
+          love.graphics.setColor(0,51,255,75)
+          love.graphics.printf(cell.value, cell.x, cell.y,
+                                cell.width, "center")
+        end
         cell:drawOptions()
       end
     end
